@@ -13,6 +13,7 @@ import { AuthenticatedUserQueryHandler } from './use-cases/login-user.query';
 import { LocalStrategy } from './strategies/local.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { AuthService } from './auth.service';
+import { FileRepository } from 'src/infrastructure/file.repository';
 
 const strategies = [GoogleStrategy, LocalStrategy, JwtStrategy];
 
@@ -31,6 +32,7 @@ const strategies = [GoogleStrategy, LocalStrategy, JwtStrategy];
     ValidateGoogleUserCommandHandler,
     AuthenticatedUserQueryHandler,
     UserRepository,
+    FileRepository,
     PrismaService,
     AuthService,
   ],

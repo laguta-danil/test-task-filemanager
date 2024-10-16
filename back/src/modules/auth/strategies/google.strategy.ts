@@ -23,11 +23,12 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(
-    accessToken: string,
-    refreshToken: string,
+    _accessToken: string,
+    _refreshToken: string,
     profile: any,
     done: VerifiedCallback,
   ) {
+    console.log(profile);
     const user = await this.commandBus.execute(
       new ValidateGoogleUserCommand(profile),
     );

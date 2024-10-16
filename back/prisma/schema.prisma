@@ -13,37 +13,58 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model User {
-  id                Int         @id @unique @default(autoincrement())
-  email             String 
-  password          String
-  folders           Folder[]
-  sharedWithMe      Shared? 
+  id       Int      @id @unique @default(autoincrement())
+  email    String
+  password String
+  folders  Folder[]
+  sharedWithMe Shared?
 
   @@map("user")
 }
 
 model Folder {
-  id                Int          @id @unique @default(autoincrement())   
-  creator           User         @relation(fields: [userId], references: [id])
-  files             File[]
-  userId            Int
+  id           Int                      @id @unique @default(autoincrement())
+  creator      User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  folderName   String                   @default("folderName")
+  insideFolder folderToFolderRelation[] @relation("mainFolder")
+  userId       Int
+  folders      folderToFolderRelation[] @relation("folderInside")
+  files        folderToFileRelation[]
+  mainFolder   Boolean?
 
   @@map("folder")
 }
 
+model folderToFolderRelation {
+  id               Int    @id @unique @default(autoincrement())
+  folder           Folder @relation("mainFolder", fields: [folderId], references: [id], onDelete: Cascade)
+  folderId         Int
+  folderInside     Folder @relation("folderInside", fields: [folderInsideId], references: [id], onDelete: Cascade)
+  folderInsideId   Int
+  folderInsideName String 
+}
+
+model folderToFileRelation {
+  id       Int    @id @unique @default(autoincrement())
+  folder   Folder @relation(fields: [folderId], references: [id], onDelete: Cascade)
+  folderId Int
+  file     File   @relation(fields: [fileId], references: [id], onDelete: Cascade)
+  fileId   Int
+  fileName String
+}
+
 model File {
-  id                Int          @id @unique @default(autoincrement())  
-  fileName          String 
-  fileExtensions    String
-  folders           Folder[]
+  id             Int                    @id @unique @default(autoincrement())
+  fileName       String
+  fileExtensions String
+  folders        folderToFileRelation[]
 
   @@map("file")
 }
 
 model Shared {
-  id                Int          @id @unique @default(autoincrement()) 
-  userId            Int          @unique
-  user              User         @relation(fields: [userId], references: [id])
+  id     Int  @id @unique @default(autoincrement())
+  userId Int  @unique
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
