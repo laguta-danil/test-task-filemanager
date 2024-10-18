@@ -28,7 +28,6 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
     profile: any,
     done: VerifiedCallback,
   ) {
-    console.log(profile);
     const user = await this.commandBus.execute(
       new ValidateGoogleUserCommand(profile),
     );

@@ -1,42 +1,18 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { CommandBus } from '@nestjs/cqrs';
+import { Controller, Get, UseGuards } from '@nestjs/common';
+import { QueryBus } from '@nestjs/cqrs';
+import { UserId } from 'src/decorators/auth.decorator';
+import { GetUserQuery } from './use-cases/getUser';
+import JwtAuthenticationGuard from '../auth/guards/jwt-auth.guard';
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly commandBus: CommandBus) {}
+  constructor(private readonly queryBus: QueryBus) {}
 
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.commandBus.execute(createUserDto);
-  }
-
+  @UseGuards(JwtAuthenticationGuard)
   @Get()
-  findAll() {
-    return this.commandBus.execute(1);
-  }
+  async getUser(@UserId() userId) {
+    const user = await this.queryBus.execute(new GetUserQuery(userId));
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.commandBus.execute(1);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.commandBus.execute(1);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.commandBus.execute(1);
+    return { email: user.email };
   }
 }
