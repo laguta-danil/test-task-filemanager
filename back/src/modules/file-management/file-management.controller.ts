@@ -27,7 +27,7 @@ export class FileManagementController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
-  ) {}
+  ) { }
 
   @Post('file/:folderId')
   @UseInterceptors(FileInterceptor('file'))
@@ -36,8 +36,6 @@ export class FileManagementController {
     @UserId() userId,
     @Param() param: StoreFileDto,
   ) {
-    console.log(userId, 'userId');
-    console.log(param.folderId, 'folderId');
     return this.commandBus.execute(
       new StoreFileCommand({ file, userId, folderId: param.folderId }),
     );
@@ -46,13 +44,13 @@ export class FileManagementController {
   @Post('folder/:folderId')
   createFolder(
     @Param() param: StoreFileDto,
-    @Body() body: { foldername: string },
+    @Body() body: { folderName: string },
     @UserId() userId,
   ) {
     return this.commandBus.execute(
       new CreateFolderCommand({
         folderId: param.folderId,
-        folderName: body.foldername,
+        folderName: body.folderName,
         userId,
       }),
     );

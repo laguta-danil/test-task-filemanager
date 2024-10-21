@@ -10,6 +10,7 @@ import { StoreFileCommandHandler } from './use-cases/commands/create-file.handle
 import { getMainUserFolderQueryHandler } from './use-cases/querys/get-main-user-folder.query';
 import { CreateFolderCommandHandler } from './use-cases/commands/create-folder.command';
 import { getFolderQueryHandler } from './use-cases/querys/get-folder.query';
+import { AwsS3Module } from '../awsS3/aws.s3.module';
 
 const fileManagementCommandHandlers = [
   StoreFileCommandHandler,
@@ -24,7 +25,7 @@ const fileManagementQueryHandlers = [
 const repositories = [UserRepository, FileRepository];
 
 @Module({
-  imports: [CqrsModule, AuthModule],
+  imports: [CqrsModule, AuthModule, AwsS3Module],
   controllers: [FileManagementController],
   providers: [
     PrismaService,

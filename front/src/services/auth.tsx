@@ -3,94 +3,85 @@ import { Navigate, useLocation } from 'react-router-dom';
 import { useGetUserMutation, useLoginMutation, useLogoutMutation } from '../store/auth';
 
 interface AuthContextType {
-    user: any;
-    error: any;
-    isError: boolean;
-    signin: (username: string, password: string, callback: VoidFunction) => void;
-    signout: (callback: VoidFunction) => void;
-    googleSingIn: (callback: VoidFunction) => void;
+  user: any;
+  error: any;
+  isError: boolean;
+  signIn: (username: string, password: string, callback: VoidFunction) => void;
+  signOut: (callback: VoidFunction) => void;
+  googleSingIn: (callback: VoidFunction) => void;
 }
 
 let AuthContext = React.createContext<AuthContextType>(null!);
 
-
-
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-    const [user, setUser] = React.useState<any>();
-    const [isLoaded, setIsLoaded] = React.useState<any>(false);
-    const [getUser, {error, isError}]: any = useGetUserMutation();
-    const [login] = useLoginMutation();
-    const [logout] = useLogoutMutation();
+  const [user, setUser] = React.useState<any>();
+  const [isLoaded, setIsLoaded] = React.useState<any>(false);
+  const [getUser, { error, isError }]: any = useGetUserMutation();
+  const [login] = useLoginMutation();
+  const [logout] = useLogoutMutation();
 
-    useEffect(() => {
-        const fetchUser = async () => {
-            try {
-                const { data: user }: any = await getUser();
-                console.log(user, 'fetch user data')
-                
-                if (user) {
-                    setUser(user.email);
-                }
-                setIsLoaded(true);
-            } catch (error) {
-                console.error(error);
-            }
-        }
-        fetchUser();
-
-    }, [getUser]);
-    
-
-    const signin = async (email: string, password: string, callback: VoidFunction) => {
-        await login({ email, password });
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
         const { data: user }: any = await getUser();
-        setUser(user?.email);
-        setIsLoaded(true)
-        callback();
-        
+        if (user) {
+          setUser(user.email);
+        }
+        setIsLoaded(true);
+      } catch (error) {
+        console.error(error);
+      }
     };
+    fetchUser();
+  }, [getUser]);
 
-    const signout = async (callback: VoidFunction) => {
-        await logout();
-        setUser(null);
-        callback();
-    };
+  const signIn = async (email: string, password: string, callback: VoidFunction) => {
+    await login({ email, password });
+    const { data: user }: any = await getUser();
+    setUser(user?.email);
+    setIsLoaded(true);
+    callback();
+  };
 
-    const googleSingIn = async () => {
-        const googleAuthUrl = `${process.env.REACT_APP_API_URI}/auth/google/login`;
-        console.log(googleAuthUrl)
-        window.location.href = googleAuthUrl;
-    }
+  const signOut = async (callback: VoidFunction) => {
+    await logout();
+    setUser(null);
+    callback();
+  };
 
-    const value = { user, signin, signout, error, isError, googleSingIn };
+  const googleSingIn = async () => {
+    const googleAuthUrl = `${process.env.REACT_APP_API_URI}/auth/google/login`;
+    window.location.href = googleAuthUrl;
+  };
 
-    return isLoaded && <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  const value = { user, signIn, signOut, error, isError, googleSingIn };
+
+  return isLoaded && <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {
-    return React.useContext(AuthContext);
+  return React.useContext(AuthContext);
 }
 
 export function RequireAuth({ children }: { children: JSX.Element }) {
-    
-    const auth = useAuth();
+  const auth = useAuth();
 
-    const location = useLocation();
+  const location = useLocation();
 
-    if (!auth.user) {
-        return <Navigate to="/login" state={{ from: location }} replace />;
-    }
+  if (!auth.user) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
 
-    return children;
+  return children;
 }
 
 export function RequireNotAuthed({ children }: { children: JSX.Element }) {
-    const auth = useAuth();
-    const location = useLocation();
+  const auth = useAuth();
+  const location = useLocation();
 
-    if (auth.user) {
-        return <Navigate to="/" state={{ from: location }} replace />;
-    }
+  if (auth.user) {
+    return <Navigate to="/" state={{ from: location }} replace />;
+  }
 
-    return children;
+  return children;
 }

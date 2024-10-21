@@ -4,16 +4,18 @@ import { PrismaService } from 'src/providers/database/prisma.service';
 
 @Injectable()
 export class FileRepository {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async addFile({
     fileExtensions,
     fileName,
     folderId,
+    previewImg
   }: {
     fileExtensions: string;
     fileName: string;
     folderId: number;
+    previewImg: string
   }) {
     const newFile = await this.prisma.file.create({
       data: { fileExtensions: fileExtensions, fileName: fileName },

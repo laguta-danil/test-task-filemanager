@@ -8,17 +8,15 @@ export class CreateFolderCommand implements ICommand {
       userId: number;
       folderId: number;
     },
-  ) {}
+  ) { }
 }
 @CommandHandler(CreateFolderCommand)
 export class CreateFolderCommandHandler
-  implements ICommandHandler<CreateFolderCommand, void>
-{
-  constructor(private readonly fileRepository: FileRepository) {}
+  implements ICommandHandler<CreateFolderCommand, void> {
+  constructor(private readonly fileRepository: FileRepository) { }
 
   async execute({ data }: CreateFolderCommand): Promise<void> {
     const { folderName, userId, folderId } = data;
-    const uploadDir = './uploads';
 
     //check rights to access folder
     await this.fileRepository.isUserFolder({
@@ -33,17 +31,5 @@ export class CreateFolderCommandHandler
     });
 
     await this.fileRepository.createFolder({ userId, folderId, folderName });
-    // await Promise.all([
-    //   await fs.writeFile(
-    //     uploadDir + '/' + userId + '/' + file.originalname,
-    //     file.buffer,
-    //     'base64',
-    //   ),
-    //   await this.fileRepository.addFile({
-    //     fileExtensions: file.mimetype,
-    //     fileName: file.originalname,
-    //     folderId,
-    //   }),
-    // ]);
   }
 }

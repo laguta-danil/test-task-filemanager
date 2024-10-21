@@ -17,7 +17,6 @@ export class ValidateGoogleUserCommandHandler
   ) {}
 
   async execute({ googleUserProfile }): Promise<User> {
-    console.log(googleUserProfile);
     const user = await this.userRepository.findUserByEmail(
       googleUserProfile._json.email,
     );

@@ -16,7 +16,7 @@ export const authApi = api.injectEndpoints({
         }),
         getUser: build.mutation({
             query: () => ({
-                url: `user`, 
+                url: `user`,
             }),
         }),
 

@@ -46,12 +46,13 @@ model folderToFolderRelation {
 }
 
 model folderToFileRelation {
-  id       Int    @id @unique @default(autoincrement())
-  folder   Folder @relation(fields: [folderId], references: [id], onDelete: Cascade)
-  folderId Int
-  file     File   @relation(fields: [fileId], references: [id], onDelete: Cascade)
-  fileId   Int
-  fileName String
+  id         Int      @id @unique @default(autoincrement())
+  folder     Folder   @relation(fields: [folderId], references: [id], onDelete: Cascade)
+  folderId   Int
+  file       File     @relation(fields: [fileId], references: [id], onDelete: Cascade)
+  previewImg String   @default("https://raffle-management-develop.s3.eu-north-1.amazonaws.com/4735499.png")
+  fileId     Int
+  fileName   String
 }
 
 model File {

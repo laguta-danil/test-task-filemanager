@@ -1,38 +1,33 @@
-import styled from "@emotion/styled";
-import { Box, Button, CssBaseline, Divider, FormControl, FormControlLabel, FormLabel, Link, TextField, Typography } from "@mui/material";
-import { useState } from "react";
-import {  GoogleIcon } from "../assets/singUpIcons";
-import Stack from '@mui/material/Stack';
+import { Avatar, Box, Button, Input, Typography } from '@mui/material';
+import { useEffect, useState } from 'react';
+import { useGetUserHomePageQuery } from '../store/fileManagement';
+import { CurrentFolder, File, Folder } from '../types/userFile.types';
+import { Files } from '../components/Files';
+import { Folders } from '../components/Folders';
+import { Header } from '../components/Header';
 
+export function HomeScreen() {
+  const [files, setFiles] = useState<File[]>();
+  const [folders, setFolders] = useState<Folder[]>();
+  const [currentFolder, setCurrentFolder] = useState<CurrentFolder | undefined>();
 
-const Card = styled(Stack)(({ theme }) => ({
-    display: 'flex',
-    flexDirection: 'column',
-    alignSelf: 'center',
-    width: '100%',
-      }));
-  
-  const Container = styled(Stack)(({ theme }) => ({
-    minHeight: '100%',
-    '&::before': {
-      content: '""',
-      display: 'block',
-      position: 'absolute',
-      zIndex: -1,
-      inset: 0,
-      backgroundImage:
-        'radial-gradient(ellipse at 50% 50%, hsl(210, 100%, 97%), hsl(0, 0%, 100%))',
-      backgroundRepeat: 'no-repeat',
-      
-    },
-  }));
-  
-  export function HomeScreen(props: { disableCustomTheme?: boolean }) {
-  
-    return (
-      <Box sx={{ backgroundColor: 'Scrollbar', p: 5, borderRadius: 4, width: '30%', maxWidth: 480, minWidth: 240, color: 'black'}}>
-                tratata
+  const { data } = useGetUserHomePageQuery();
+
+  useEffect(() => {
+    setFiles(data?.files);
+    setFolders(data?.folders);
+    setCurrentFolder(data?.curentFolder);
+  });
+
+  return (
+    <Box sx={{ width: '80%' }} pt={1}>
+      <Header />
+      <Box pb={1} pt={1}>
+        <Files files={files} currentFolder={currentFolder} />
       </Box>
-    );
-  }
-
+      <Box>
+        <Folders folders={folders} currentFolder={currentFolder} />
+      </Box>
+    </Box>
+  );
+}
